@@ -16,7 +16,7 @@ Usefull for sites that display one post on the main page, and want to link to pr
 == Installation ==
 
 1. Copy pmc-latest-posts.php to your wp-content/plugins folder.
-2. Activate the plugin from the 'Plugins' menu in WordPress.
+1. Activate the plugin from the 'Plugins' menu in WordPress.
 3. Add the widget to your sidebar from the 'Widgets' menu in WordPress.
 
 == Frequently Asked Questions ==
@@ -29,9 +29,10 @@ Change the Excerpt Size to 0 and no excerpt will be inserted.
 
 = How do I change the CSS style of the plugin? =
 The following CSS classes are used in the plugin:
-<h3 class="pmc-h3">Title</h3>
-<a class="pmc-link">Link</a>
-<p class="pmc-excerpt">Excerpt</p>
+HTML TAG	CLASS		DISPLAYED AS
+h3		pmc-h3		Title
+a		pmc-link	Link
+p		pmc-excerpt	Excerpt
 
 Add the class names to your theme's style.css with your custom css.
 
