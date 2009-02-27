@@ -9,9 +9,7 @@ Display latest post with excerpts in a sidebar widget.
 
 == Description ==
 
-Pauls Latest Pots displays a list of your latest post in he sidebar with excerpts.
-Excerpts length can be modified or left out completely.
-Usefull for sites that display one post on the main page, and want to link to previous posts.
+Pauls Latest Pots displays a list of your latest post in he sidebar with excerpts. Excerpts length can be modified or left out completely. Usefull for sites that display one post on the main page, and want to link to previous posts.
 
 == Installation ==
 
@@ -22,7 +20,12 @@ Usefull for sites that display one post on the main page, and want to link to pr
 == Frequently Asked Questions ==
 
 = What settings can I change? =
-The plugin page allows you to change the following settings: Title, Number of Posts and Excerpt Size.
+The plugin page allows you to change the following settings: Title, Number of Posts, Excerpt Size and Post Offset.
+
+1. Title: Title of the Sidebar widget.
+1. Number of Posts: Number of posts to show in the Sidebar.
+1. Excerpt Size: Number of words to display in the excerpt for the post.
+1. Post Offset: The number of posts to skip before displaying the list in the Sidebar. Numbering starts from 0. To ignore the latest post, set the offset to 1.
 
 = What if I don't want to show the excerpt? =
 Change the Excerpt Size to 0 and no excerpt will be inserted.
