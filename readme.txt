@@ -33,9 +33,9 @@ Change the Excerpt Size to 0 and no excerpt will be inserted.
 = How do I change the CSS style of the plugin? =
 The following CSS classes are used in the plugin:
 
-Title: h3.pmc-h3
-Link: a.pmc-link
-Excerpt: p.pmc-excerpt
+* Title: h3.pmc-h3
+* Link: a.pmc-link
+* Excerpt: p.pmc-excerpt
 
 Add the class names to your theme's style.css with your custom css.
 
