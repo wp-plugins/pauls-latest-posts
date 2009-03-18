@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.2
+Version: 1.3
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -62,13 +62,19 @@ function widget_pmcLatestPosts_init() {
 				//create the link
 				echo '<li><a class="pmc-link" href="' . $pmcHREF . '">' . $pmcTITLE . '</a><br />';
 
+				//get the content of the post
+				$pmcFullContent = get_the_content('');
+				
+				//call the function to trim it according to our settings
+				$pmcTrimmedContent = pmc_trim_excerpt($pmcFullContent);
+				
 				//check to see if the excerpt size is set to 0
 				//if so the we won't display it.
 				if ($pmcExcerptSize != 0) {
 					//output the excerpt
-					//we use the_content_rss as this allows us to set a size for the excerpt
+					
 					echo '<span class="pmc-excerpt">';
-					the_content_rss('', TRUE, '', $pmcExcerptSize);
+					echo $pmcTrimmedContent;
 					echo '</span></li>';
 				}
 				
@@ -100,6 +106,34 @@ function widget_pmcLatestPosts_init() {
 			echo $after_widget;
 		} //close widget_pmcLatestPosts
 		
+		//function taken from formatting.php, used by WordPress to trim the excerpt
+		//we'll use this function as the basis of trimming the content and stripping HTML tags as per the settings provided by the user
+		function pmc_trim_excerpt($text) {
+			//get the settings for our widget
+			$pmcOptions = get_option('widget_pmcLatestPosts');
+			//store excerpt_size, strip_tags, and read_more
+			$pmcExcerptSize = $pmcOptions['pmc_size'];
+			$pmcStripTags = $pmcOptions['pmc_strip_tags'];
+			$pmcReadMore = $pmcOptions['pmc_read_more'];
+			
+
+			$text = strip_shortcodes( $text );
+
+			$text = apply_filters('the_content', $text);
+			$text = str_replace(']]>', ']]&gt;', $text);
+			if (!$pmcStripTags) {
+				$text = strip_tags($text);
+			}
+			$excerpt_length = apply_filters('excerpt_length', $pmcExcerptSize);
+			$words = explode(' ', $text, $excerpt_length + 1);
+			if (count($words) > $excerpt_length) {
+				array_pop($words);
+				array_push($words, $pmcReadMore);
+				$text = implode(' ', $words);
+			}
+			return $text;
+		}
+
 		//function to build the config panel
 		function pmcLatestPosts_control() {
 			//get the options from the wp database
@@ -113,6 +147,8 @@ function widget_pmcLatestPosts_init() {
 				$newoptions['pmc_post_offset'] = (int) $_POST['pmc_post_offset'];
 				$newoptions['pmc_show_comments'] = $_POST['pmc_show_comments'];
 				$newoptions['pmc_num_comments'] = $_POST['pmc_num_comments'];
+				$newoptions['pmc_strip_tags'] = $_POST['pmc_strip_tags'];
+				$newoptions['pmc_read_more'] = $_POST['pmc_read_more'];
 				} //close if
 			
 			//if there's been a change, do an update
@@ -126,33 +162,42 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_num_posts'] ) $options['pmc_num_posts'] = 5;
 			if ( !$options['pmc_size'] ) $options['pmc_size'] = 25;
 			if ( !$options['pmc_post_offset'] ) $options['pmc_post_offset'] = 1;
-			if ( !$options['pmc_show_comments'] ) $options['pmc_show_comments'] = "";
+			if ( !$options['pmc_show_comments'] ) $options['pmc_show_comments'] = '';
 			if ( !$options['pmc_num_comments'] ) $options['pmc_num_comments'] = 5;
+			if ( !$options['pmc_strip_tags'] ) $options['pmc_strip_tags'] = '';
+			if ( !$options['pmc_read_more'] ) $options['pmc_read_more'] = "Read More";
 			
 			//store the options we got from the database
-			$pmcTitle = $options['pmc_title'];
-			$pmcNumPosts = $options['pmc_num_posts'];
-			$pmcSize = $options['pmc_size'];
-			$pmcPostOffset = $options['pmc_post_offset'];
-			$pmcShowComments = $options['pmc_show_comments'];
-			$pmcNumComments = $options['pmc_num_comments'];
-
-			//strip any html characters from the title
 			$pmcTitle = htmlspecialchars($options['pmc_title'], ENT_QUOTES);
+			$pmcNumPosts = htmlspecialchars($options['pmc_num_posts'], ENT_QUOTES);
+			$pmcSize = htmlspecialchars($options['pmc_size'], ENT_QUOTES);
+			$pmcPostOffset = htmlspecialchars($options['pmc_post_offset'], ENT_QUOTES);
+			$pmcShowComments = htmlspecialchars($options['pmc_show_comments'], ENT_QUOTES);
+			$pmcNumComments = htmlspecialchars($options['pmc_num_comments'], ENT_QUOTES);
+			$pmcStripTags = htmlspecialchars($options['pmc_strip_tags'], ENT_QUOTES);
+			$pmcReadMore = htmlspecialchars($options['pmc_read_more'], ENT_QUOTES);
 			
 			//WP stores a check box as Null or "on", in order to display properly, we need to convert "on" to "checked=yes"
-			if ($pmcNumComments) {
-				$pmcChecked = ' checked="yes" ';
+			if ($pmcShowComments) {
+				$pmcShowComments = ' checked="yes" ';
 			} else {
-				$pmcChecked = '';
+				$pmcShowComments = '';
+			}
+			
+			if ($pmcStripTags) {
+				$pmcStripTags = ' checked="yes" ';
+			} else {
+				$pmcStripTags = '';
 			}
 			
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_title">' . __('Title:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_title" name="pmc_title" type="text" value="'.$pmcTitle.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_posts">' . __('Number of Posts:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_num_posts" name="pmc_num_posts" type="text" value="'.$pmcNumPosts.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_size">' . __('Excerpt Size:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_size" name="pmc_size" type="text" value="'.$pmcSize.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_post_offset">' . __('Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_offset" name="pmc_post_offset" type="text" value="'.$pmcPostOffset.'" /></label></p>';
-		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments">' . __('Show Comments:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_offset" name="pmc_show_comments" type="checkbox"'.$pmcShowComments.'" /></label></p>';
-		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_comments">' . __('Number of Comments:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_offset" name="pmc_num_comments" type="text" value="'.$pmcNumComments.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_read_more">' . __('Read More Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_read_more" name="pmc_read_more" type="text" value ="'.$pmcReadMore.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_strip_tags">' . __('Allow HTML in Excerpt?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_strip_tags" name="pmc_strip_tags" type="checkbox"'.$pmcStripTags.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments">' . __('Show Latest Comments?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_comments" name="pmc_show_comments" type="checkbox"'.$pmcShowComments.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_comments">' . __('Number of Comments:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_num_comments" name="pmc_num_comments" type="text" value="'.$pmcNumComments.'" /></label></p>';
 		echo '<input type="hidden" id="pmc_latest_posts_submit" name="pmc_latest_posts_submit" value="1" />';
 		}
 
