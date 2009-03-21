@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.3
+Version: 1.4
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -31,9 +31,28 @@ function widget_pmcLatestPosts_init() {
 			$pmcPostOffset = $pmcOptions['pmc_post_offset'];
 			$pmcShowComments = $pmcOptions['pmc_show_comments'];
 			$pmcNumComments = $pmcOptions['pmc_num_comments'];
+			$pmcRandOffset = $pmcOptions['pmc_rand_offset'];
 			
-			//build the parameter list for get_posts
-			$pmcParameters = 'numberposts=' . $pmcNumPosts . '&offset=' . $pmcPostOffset;
+			//if the user has specified a random offset
+			if ($pmcRandOffset != 'on') {				
+				//build the parameter list for get_posts
+				$pmcParameters = 'numberposts=' . $pmcNumPosts . '&offset=' . $pmcPostOffset;
+			} else {
+				//set the minimum bounds for rand()
+				$pmcRandMin = 0;
+				//set the maximum bounds for rand()
+				//first get the total amount of posts
+				$pmcTotalPosts = wp_count_posts();
+				//now get the amount of published posts
+				$pmcRandMax = $pmcTotalPosts->publish;
+				
+				//set the offset to a random number
+				$pmcPostOffset = rand($pmcRandMin, $pmcRandMax);
+				
+				//build the parameter list
+				$pmcParameters = 'numberposts=' . $pmcNumPosts . '&offset=' . $pmcPostOffset;
+			} //close if
+				
 			//get the posts
 			$pmcPosts = get_posts($pmcParameters);
 
@@ -149,6 +168,7 @@ function widget_pmcLatestPosts_init() {
 				$newoptions['pmc_num_comments'] = $_POST['pmc_num_comments'];
 				$newoptions['pmc_strip_tags'] = $_POST['pmc_strip_tags'];
 				$newoptions['pmc_read_more'] = $_POST['pmc_read_more'];
+				$newoptions['pmc_rand_offset'] = $_POST['pmc_rand_offset'];
 				} //close if
 			
 			//if there's been a change, do an update
@@ -166,6 +186,7 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_num_comments'] ) $options['pmc_num_comments'] = 5;
 			if ( !$options['pmc_strip_tags'] ) $options['pmc_strip_tags'] = '';
 			if ( !$options['pmc_read_more'] ) $options['pmc_read_more'] = "Read More";
+			if ( !$options['pmc_rand_offset'] ) $options['pmc_rand_offset'] = '';
 			
 			//store the options we got from the database
 			$pmcTitle = htmlspecialchars($options['pmc_title'], ENT_QUOTES);
@@ -176,6 +197,7 @@ function widget_pmcLatestPosts_init() {
 			$pmcNumComments = htmlspecialchars($options['pmc_num_comments'], ENT_QUOTES);
 			$pmcStripTags = htmlspecialchars($options['pmc_strip_tags'], ENT_QUOTES);
 			$pmcReadMore = htmlspecialchars($options['pmc_read_more'], ENT_QUOTES);
+			$pmcRandOffset = htmlspecialchars($options['pmc_rand_offset'], ENT_QUOTES);
 			
 			//WP stores a check box as Null or "on", in order to display properly, we need to convert "on" to "checked=yes"
 			if ($pmcShowComments) {
@@ -190,9 +212,16 @@ function widget_pmcLatestPosts_init() {
 				$pmcStripTags = '';
 			}
 			
+			if ($pmcRandOffset) {
+				$pmcRandOffset = ' checked="yes" ';
+			} else {
+				$pmcRandOffset = '';
+			}
+		
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_title">' . __('Title:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_title" name="pmc_title" type="text" value="'.$pmcTitle.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_posts">' . __('Number of Posts:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_num_posts" name="pmc_num_posts" type="text" value="'.$pmcNumPosts.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_size">' . __('Excerpt Size:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_size" name="pmc_size" type="text" value="'.$pmcSize.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_rand_offset">' . __('Randomise Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_rand_offset" name="pmc_rand_offset" type="checkbox" '.$pmcRandOffset.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_post_offset">' . __('Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_offset" name="pmc_post_offset" type="text" value="'.$pmcPostOffset.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_read_more">' . __('Read More Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_read_more" name="pmc_read_more" type="text" value ="'.$pmcReadMore.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_strip_tags">' . __('Allow HTML in Excerpt?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_strip_tags" name="pmc_strip_tags" type="checkbox"'.$pmcStripTags.' /></label></p>';

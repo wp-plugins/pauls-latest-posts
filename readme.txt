@@ -3,7 +3,7 @@ Contributors: paulmac
 Tags: posts, excerpts, lastest, widget, sidebar
 Requires at least: 2.3
 Tested up to: 2.7.1
-Stable tag: 1.2
+Stable tag: trunk
 
 Display latest posts with excerpts and comments in a sidebar widget.
 
@@ -21,11 +21,12 @@ Pauls Latest Pots displays a list of your latest posts and comments in the sideb
 == Frequently Asked Questions ==
 
 = What settings can I change? =
-The plugin page allows you to change the following settings: Title, Number of Posts, Excerpt Size, Post Offset, Read More Text, Allow HTML in Excerpt, Show Comments and Number of Comments.
+The plugin page allows you to change the following settings: Title, Number of Posts, Excerpt Size, Randomise Post Offset, Post Offset, Read More Text, Allow HTML in Excerpt, Show Comments and Number of Comments.
 
 1. Title: Title of the Sidebar widget.
 1. Number of Posts: Number of posts to show in the Sidebar.
 1. Excerpt Size: Number of words to display in the excerpt for the post.
+1. Randomise Post Offset: Picks a random offset and displays the next "Number of Posts" from that offset. Over-rides any specified "Post Offset".
 1. Post Offset: The number of posts to skip before displaying the list in the Sidebar. Numbering starts from 0. To ignore the latest post, set the offset to 1.
 1. Read More Text: Text display at the end of the excerpt. Defaults to "Read More".
 1. Allow HTML in Excerpt: If left unticked, all HTML tags will be stripped, leaving only plain text. Enabling this option will leave in the HTML.
@@ -55,4 +56,4 @@ I'm looking into adding a list of latest uploads to the plugin.
 
 == Thanks ==
 
-Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality and the ability to change the Read More text.
+Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality and the ability to change the Read More text. Thanks to Wil for suggesting the Randomised Offset setting.
