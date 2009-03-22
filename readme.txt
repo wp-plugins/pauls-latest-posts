@@ -21,7 +21,7 @@ Pauls Latest Pots displays a list of your latest posts and comments in the sideb
 == Frequently Asked Questions ==
 
 = What settings can I change? =
-The plugin page allows you to change the following settings: Title, Number of Posts, Excerpt Size, Randomise Post Offset, Post Offset, Read More Text, Allow HTML in Excerpt, Show Comments and Number of Comments.
+The plugin page allows you to change the following settings:
 
 1. Title: Title of the Sidebar widget.
 1. Number of Posts: Number of posts to show in the Sidebar.
@@ -32,18 +32,15 @@ The plugin page allows you to change the following settings: Title, Number of Po
 1. Allow HTML in Excerpt: If left unticked, all HTML tags will be stripped, leaving only plain text. Enabling this option will leave in the HTML.
 1. Show Comments: Should the widget also display your latest comments.
 1. Number of Comments: Number of comments to show in the Sidebar.
+1. Style for Posts/ Comments Heading: Set CSS style for the H3 heading used to display "Posts" and "Comments".
+1. Style for Post Link: Set CSS style for link to article.
+1. Style for Excerpt Text: Set CSS style for the excerpt.
+1. Style for Read More Link: Set CSS style for "Read More".
+
+Note: When specifying the styles there is no need to include {} at the beginning and end of your styles. See the default styles for an example.
 
 = What if I don't want to show the excerpt? =
 Change the Excerpt Size to 0 and no excerpt will be inserted.
-
-= How do I change the CSS style of the plugin? =
-The following CSS classes are used in the plugin:
-
-* Titles: h3.pmc-h3
-* Link: a.pmc-link
-* Excerpt: span.pmc-excerpt
-
-Add the class names to your theme's style.css with your custom css.
 
 = I'm using an old version of WordPress, will this plugin work? =
 This plugin uses the Widget API built into WordPress since version 2.3. Therefore, this plugin will not work on versions older than 2.3. If you are using a version of WordPress prior to 2.3, then I suggest that you upgrade to the latest version.
@@ -53,6 +50,14 @@ If you want to, then yes. This plugin is released under the GPL. You are free to
 
 = What other functionality are you thinking of adding? =
 I'm looking into adding a list of latest uploads to the plugin.
+
+== Changelog ==
+
+= Version 1.5 =
+* Added style options.
+* Added link to "Read More".
+* Tweaked HTML output to display better.
+* Added default styles.
 
 == Thanks ==
 

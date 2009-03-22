@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.4
+Version: 1.5
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -32,6 +32,7 @@ function widget_pmcLatestPosts_init() {
 			$pmcShowComments = $pmcOptions['pmc_show_comments'];
 			$pmcNumComments = $pmcOptions['pmc_num_comments'];
 			$pmcRandOffset = $pmcOptions['pmc_rand_offset'];
+			$pmcReadMore = $pmcOptions['pmc_read_more'];
 			
 			//if the user has specified a random offset
 			if ($pmcRandOffset != 'on') {				
@@ -94,7 +95,8 @@ function widget_pmcLatestPosts_init() {
 					
 					echo '<span class="pmc-excerpt">';
 					echo $pmcTrimmedContent;
-					echo '</span></li>';
+					echo '</span><br />';
+					echo '<a class="pmc-read-more" href="' . $pmcHREF . '">' . $pmcReadMore . '</a></li>';
 				}
 				
 			} //close foreach
@@ -133,8 +135,6 @@ function widget_pmcLatestPosts_init() {
 			//store excerpt_size, strip_tags, and read_more
 			$pmcExcerptSize = $pmcOptions['pmc_size'];
 			$pmcStripTags = $pmcOptions['pmc_strip_tags'];
-			$pmcReadMore = $pmcOptions['pmc_read_more'];
-			
 
 			$text = strip_shortcodes( $text );
 
@@ -147,9 +147,11 @@ function widget_pmcLatestPosts_init() {
 			$words = explode(' ', $text, $excerpt_length + 1);
 			if (count($words) > $excerpt_length) {
 				array_pop($words);
-				array_push($words, $pmcReadMore);
+				//array_push($words, $pmcReadMore);
 				$text = implode(' ', $words);
 			}
+			//add quote marks to start and end of array
+			$text = '"' . $text . ' ..." ';
 			return $text;
 		}
 
@@ -169,6 +171,10 @@ function widget_pmcLatestPosts_init() {
 				$newoptions['pmc_strip_tags'] = $_POST['pmc_strip_tags'];
 				$newoptions['pmc_read_more'] = $_POST['pmc_read_more'];
 				$newoptions['pmc_rand_offset'] = $_POST['pmc_rand_offset'];
+				$newoptions['pmc_h3_pmc-h3'] = $_POST['pmc_h3_pmc-h3'];
+				$newoptions['pmc_a_pmc-link'] = $_POST['pmc_a_pmc-link'];
+				$newoptions['pmc_span_pmc-excerpt'] = $_POST['pmc_span_pmc-excerpt'];
+				$newoptions['pmc_a_read_more'] = $_POST['pmc_a_read_more'];
 				} //close if
 			
 			//if there's been a change, do an update
@@ -187,6 +193,10 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_strip_tags'] ) $options['pmc_strip_tags'] = '';
 			if ( !$options['pmc_read_more'] ) $options['pmc_read_more'] = "Read More";
 			if ( !$options['pmc_rand_offset'] ) $options['pmc_rand_offset'] = '';
+			if ( !$options['pmc_h3_pmc-h3'] ) $options['pmc_h3_pmc-h3'] = 'text-align: center;';
+			if ( !$options['pmc_a_pmc-link'] ) $options['pmc_a_pmc-link'] = 'font-weight: bold; font-style: normal; font-size: 1em;';
+			if ( !$options['pmc_span_pmc-excerpt'] ) $options['pmc_span_pmc-excerpt'] = 'font-style: italic; font-size: .8em;';
+			if ( !$options['pmc_a_read_more'] ) $options['pmc_a_read_more'] = 'font-weight: bold; font-size: .8em;';
 			
 			//store the options we got from the database
 			$pmcTitle = htmlspecialchars($options['pmc_title'], ENT_QUOTES);
@@ -198,6 +208,10 @@ function widget_pmcLatestPosts_init() {
 			$pmcStripTags = htmlspecialchars($options['pmc_strip_tags'], ENT_QUOTES);
 			$pmcReadMore = htmlspecialchars($options['pmc_read_more'], ENT_QUOTES);
 			$pmcRandOffset = htmlspecialchars($options['pmc_rand_offset'], ENT_QUOTES);
+			$pmcH3 = htmlspecialchars($options['pmc_h3_pmc-h3'], ENT_QUOTES);
+			$pmcA = htmlspecialchars($options['pmc_a_pmc-link'], ENT_QUOTES);
+			$pmcSpan = htmlspecialchars($options['pmc_span_pmc-excerpt'], ENT_QUOTES);
+			$pmcMore = htmlspecialchars($options['pmc_a_read_more'], ENT_QUOTES);
 			
 			//WP stores a check box as Null or "on", in order to display properly, we need to convert "on" to "checked=yes"
 			if ($pmcShowComments) {
@@ -227,9 +241,44 @@ function widget_pmcLatestPosts_init() {
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_strip_tags">' . __('Allow HTML in Excerpt?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_strip_tags" name="pmc_strip_tags" type="checkbox"'.$pmcStripTags.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments">' . __('Show Latest Comments?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_comments" name="pmc_show_comments" type="checkbox"'.$pmcShowComments.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_comments">' . __('Number of Comments:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_num_comments" name="pmc_num_comments" type="text" value="'.$pmcNumComments.'" /></label></p>';
+		echo '<h3>Specify CSS Styles for Pauls Latest Posts</h3>';
+		echo '<p>Note: Do not include {} braces when specifying your styles.</p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_h3_pmc-h3">' . __('Style for Posts/ Comments Heading:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_h3_pmc-h3" name="pmc_h3_pmc-h3" type="text" value="'.$pmcH3.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_a_pmc-link">' . __('Style for Post Link:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_a_pmc-link" name="pmc_a_pmc-link" type="text" value="'.$pmcA.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_span_pmc-excerpt">' . __('Style for Excerpt Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_span_pmc-excerpt" name="pmc_span_pmc-excerpt" type="text" value="'.$pmcSpan.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_a_read_more">' . __('Style for Read More Link:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_a_read_more" name="pmc_a_read_more" type="text" value="'.$pmcMore.'" /></label></p>';
 		echo '<input type="hidden" id="pmc_latest_posts_submit" name="pmc_latest_posts_submit" value="1" />';
 		}
-
+		
+		//function to load user defined styles in header
+		function pmcLoadStyles() {
+			//get options from database
+			$pmcStyles=get_option('widget_pmcLatestPosts');
+			$pmcH3style = $pmcStyles['pmc_h3_pmc-h3'];
+			$pmcAstyle = $pmcStyles['pmc_a_pmc-link'];
+			$pmcSpanstyle = $pmcStyles['pmc_span_pmc-excerpt'];
+			$pmcMorestyle = $pmcStyles['pmc_a_read_more'];
+			
+			//build the style using user styles
+			$pmcHTML = '<!-- styles for Pauls Latest Posts Widget -->' . "\n";
+			$pmcHTML .= '<style type="text/css">' . "\n";
+			$pmcHTML .= 'h3.pmc-h3 {' . "\n";
+			$pmcHTML .= $pmcH3style . "\n";
+			$pmcHTML .= '}' . "\n";
+			$pmcHTML .= 'a.pmc-link {' . "\n";
+			$pmcHTML .= $pmcAstyle . "\n";
+			$pmcHTML .= '}' . "\n";
+			$pmcHTML .= 'span.pmc-excerpt {' . "\n";
+			$pmcHTML .= $pmcSpanstyle . "\n";
+			$pmcHTML .= '}' . "\n";
+			$pmcHTML .= 'a.pmc-read-more {' . "\n";
+			$pmcHTML .= $pmcMorestyle . "\n";
+			$pmcHTML .= '}' . "\n";
+			$pmcHTML .='</style>' . "\n";
+			
+			//echo the styles
+			echo $pmcHTML;
+		} 
 	//register the widget
 	register_sidebar_widget('Pauls Latest Posts', 'widget_pmcLatestPosts');
 	register_widget_control('Pauls Latest Posts', 'pmcLatestPosts_control', 300, 400 );
@@ -238,4 +287,6 @@ function widget_pmcLatestPosts_init() {
 
 //have wordpress load the widget
 add_action("plugins_loaded", "widget_pmcLatestPosts_init"); 
+//add the styles to the document head
+add_action("wp_head", "pmcLoadStyles");
 ?>
