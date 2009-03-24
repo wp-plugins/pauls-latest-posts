@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.5
+Version: 1.6
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -33,6 +33,12 @@ function widget_pmcLatestPosts_init() {
 			$pmcNumComments = $pmcOptions['pmc_num_comments'];
 			$pmcRandOffset = $pmcOptions['pmc_rand_offset'];
 			$pmcReadMore = $pmcOptions['pmc_read_more'];
+			$pmcUseTitle = $pmcOptions['pmc_use_title'];
+			$pmcShowPosts = $pmcOptions['pmc_show_posts'];
+			$pmcShowPostsTitle = $pmcOptions['pmc_show_posts_title'];
+			$pmcPostsTitle = $pmcOptions['pmc_posts_title'];
+			$pmcShowCommentsTitle = $pmcOptions['pmc_show_comments_title'];
+			$pmcCommentsTitle = $pmcOptions['pmc_comments_title'];
 			
 			//if the user has specified a random offset
 			if ($pmcRandOffset != 'on') {				
@@ -58,65 +64,79 @@ function widget_pmcLatestPosts_init() {
 			$pmcPosts = get_posts($pmcParameters);
 
 			//start building the list
-			echo $before_widget . $before_title . $pmcTitle . $after_title;
+			echo $before_widget;
 			
-			//echo the Posts heading
-			echo '<h3 class="pmc-h3">Posts</h3>';
+			//check if the user wants to use the widget title
+			if ($pmcUseTitle) {
+				echo $before_title . $pmcTitle . $after_title;
+			} //close if
+			
+			//check if the user wants to display the posts
+			if ($pmcShowPosts) {
+				
+				//check if the user wants to display the Posts title
+				if ($pmcShowPostsTitle) {
+					//echo the Posts heading
+					echo '<h3 class="pmc-h3">' . $pmcPostsTitle . '</h3>';
+				} //close if
 
-			//start the list to hold the output
-			echo '<ul>';
+				//start the list to hold the output
+				echo '<ul>';
 			
-			//loop through the posts
-			foreach ($pmcPosts as $pmcSinglePost) {
+				//loop through the posts
+				foreach ($pmcPosts as $pmcSinglePost) {
 		
-				//get the post data
-				setup_postdata($pmcSinglePost);
+					//get the post data
+					setup_postdata($pmcSinglePost);
 		
-				//retrieve the post id and use this to get the permalink
-				$pmcLINK = $pmcSinglePost->ID;		
-				$pmcHREF = get_permalink($pmcLINK);
+					//retrieve the post id and use this to get the permalink
+					$pmcLINK = $pmcSinglePost->ID;		
+					$pmcHREF = get_permalink($pmcLINK);
 		
-				//get the post title
-				$pmcTITLE = $pmcSinglePost->post_title;
+					//get the post title
+					$pmcTITLE = $pmcSinglePost->post_title;
 						
-				//create the link
-				echo '<li><a class="pmc-link" href="' . $pmcHREF . '">' . $pmcTITLE . '</a><br />';
+					//create the link
+					echo '<li><a class="pmc-link" href="' . $pmcHREF . '">' . $pmcTITLE . '</a><br />';
 
-				//get the content of the post
-				$pmcFullContent = get_the_content('');
+					//get the content of the post
+					$pmcFullContent = get_the_content('');
 				
-				//call the function to trim it according to our settings
-				$pmcTrimmedContent = pmc_trim_excerpt($pmcFullContent);
+					//call the function to trim it according to our settings
+					$pmcTrimmedContent = pmc_trim_excerpt($pmcFullContent);
 				
-				//check to see if the excerpt size is set to 0
-				//if so the we won't display it.
-				if ($pmcExcerptSize != 0) {
-					//output the excerpt
+					//check to see if the excerpt size is set to 0
+					//if so the we won't display it.
+					if ($pmcExcerptSize != 0) {
+						//output the excerpt
 					
-					echo '<span class="pmc-excerpt">';
-					echo $pmcTrimmedContent;
-					echo '</span><br />';
-					echo '<a class="pmc-read-more" href="' . $pmcHREF . '">' . $pmcReadMore . '</a></li>';
-				}
+						echo '<span class="pmc-excerpt">';
+						echo $pmcTrimmedContent;
+						echo '</span><br />';
+						echo '<a class="pmc-read-more" href="' . $pmcHREF . '">' . $pmcReadMore . '</a></li>';
+					}
 				
-			} //close foreach
+				} //close foreach
 			
-			//close the list
-			echo '</ul>';
+				//close the list
+				echo '</ul>';
+			} //close if - Show Posts check
 			
 			//check if the user wants to display the latest comments
 			if ($pmcShowComments) {	
 				//get the comment rss feed URL
 				$commentrss = get_bloginfo('comments_rss2_url');
 				
-				//set the title
-				$pmcTitle = '<h3 class="pmc-h3">Comments</h3>';
+				//check if the user wants to display comments title
+				if ($pmcShowCommentsTitle) {
+					//set the title
+					echo '<h3 class="pmc-h3">' . $pmcCommentsTitle . '</h3>';
+				} //close if
 				
 				//we need the in-built WP RSS parser for this to work
 				require_once(ABSPATH . WPINC . '/rss-functions.php');
 				
 				//build the list
-				echo $pmcTitle;
 				echo '<ul>';
 				//get the rss feed
 				get_rss($commentrss, $pmcNumComments);
@@ -175,6 +195,13 @@ function widget_pmcLatestPosts_init() {
 				$newoptions['pmc_a_pmc-link'] = $_POST['pmc_a_pmc-link'];
 				$newoptions['pmc_span_pmc-excerpt'] = $_POST['pmc_span_pmc-excerpt'];
 				$newoptions['pmc_a_read_more'] = $_POST['pmc_a_read_more'];
+				$newoptions['pmc_use_title'] = $_POST['pmc_use_title'];
+				$newoptions['pmc_show_posts'] = $_POST['pmc_show_posts'];
+				$newoptions['pmc_show_posts_title'] = $_POST['pmc_show_posts_title'];
+				$newoptions['pmc_posts_title'] = $_POST['pmc_posts_title'];
+				$newoptions['pmc_show_comments_title'] = $_POST['pmc_show_comments_title'];
+				$newoptions['pmc_comments_title'] = $_POST['pmc_comments_title'];
+				$newoptions['pmc_use_styles'] = $_POST['pmc_use_styles'];
 				} //close if
 			
 			//if there's been a change, do an update
@@ -197,6 +224,8 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_a_pmc-link'] ) $options['pmc_a_pmc-link'] = 'font-weight: bold; font-style: normal; font-size: 1em;';
 			if ( !$options['pmc_span_pmc-excerpt'] ) $options['pmc_span_pmc-excerpt'] = 'font-style: italic; font-size: .8em;';
 			if ( !$options['pmc_a_read_more'] ) $options['pmc_a_read_more'] = 'font-weight: bold; font-size: .8em;';
+			if ( !$options['pmc_posts_title'] ) $options['pmc_posts_title'] = 'Posts';
+			if ( !$options['pmc_comments_title'] ) $options['pmc_comments_title'] = 'Comments';
 			
 			//store the options we got from the database
 			$pmcTitle = htmlspecialchars($options['pmc_title'], ENT_QUOTES);
@@ -212,6 +241,13 @@ function widget_pmcLatestPosts_init() {
 			$pmcA = htmlspecialchars($options['pmc_a_pmc-link'], ENT_QUOTES);
 			$pmcSpan = htmlspecialchars($options['pmc_span_pmc-excerpt'], ENT_QUOTES);
 			$pmcMore = htmlspecialchars($options['pmc_a_read_more'], ENT_QUOTES);
+			$pmcUseTitle = htmlspecialchars($options['pmc_use_title'], ENT_QUOTES);
+			$pmcShowPosts = htmlspecialchars($options['pmc_show_posts'], ENT_QUOTES);
+			$pmcShowPostsTitle = htmlspecialchars($options['pmc_show_posts_title'], ENT_QUOTES);
+			$pmcPostsTitle = htmlspecialchars($options['pmc_posts_title'], ENT_QUOTES);
+			$pmcShowCommentsTitle = htmlspecialchars($options['pmc_show_comments_title'], ENT_QUOTES);
+			$pmcCommentsTitle = htmlspecialchars($options['pmc_comments_title'], ENT_QUOTES);
+			$pmcUseStyles = htmlspecialchars($options['pmc_use_styles'], ENT_QUOTES);
 			
 			//WP stores a check box as Null or "on", in order to display properly, we need to convert "on" to "checked=yes"
 			if ($pmcShowComments) {
@@ -231,18 +267,58 @@ function widget_pmcLatestPosts_init() {
 			} else {
 				$pmcRandOffset = '';
 			}
+			
+			if ($pmcUseTitle) {
+				$pmcUseTitle = ' checked="yes" ';
+			} else {
+				$pmcUseTitle = '';
+			}
 		
+			if ($pmcShowPosts) {
+				$pmcShowPosts = ' checked="yes" ';
+			} else {
+				$pmcShowPosts = '';
+			}
+			
+			if ($pmcShowPostsTitle) {
+				$pmcShowPostsTitle = ' checked="yes" ';
+			} else {
+				$pmcShowPostsTitle = '';
+			}
+			
+			if ($pmcShowCommentsTitle) {
+				$pmcShowCommentsTitle = ' checked="yes" ';
+			} else {
+				$pmcShowCommentsTitle = '';
+			}
+			
+			if ($pmcUseStyles) {
+				$pmcUseStyles = ' checked="yes" ';
+			} else {
+				$pmcUseStyles = '';
+			}
+		echo '<h3 style="text-align: center; text-decoration: underline;">General Options</h3>';	
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_use_title">' . __('Use Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_use_title" name="pmc_use_title" type="checkbox"'.$pmcUseTitle.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_title">' . __('Title:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_title" name="pmc_title" type="text" value="'.$pmcTitle.'" /></label></p>';
+		echo '<h3 style="text-align: center; text-decoration: underline;">Post Options</h3>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_posts">' . __('Show Posts?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_posts" name="pmc_show_posts" type="checkbox" '.$pmcShowPosts.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_posts_title">' . __('Show Posts Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_posts_title" name="pmc_show_posts_title" type="checkbox"'.$pmcShowPostsTitle.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_posts_title">' . __('Posts Title:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_posts_title" name="pmc_posts_title" type="text" value="'.$pmcPostsTitle.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_posts">' . __('Number of Posts:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_num_posts" name="pmc_num_posts" type="text" value="'.$pmcNumPosts.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_size">' . __('Excerpt Size:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_size" name="pmc_size" type="text" value="'.$pmcSize.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_rand_offset">' . __('Randomise Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_rand_offset" name="pmc_rand_offset" type="checkbox" '.$pmcRandOffset.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_post_offset">' . __('Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_offset" name="pmc_post_offset" type="text" value="'.$pmcPostOffset.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_read_more">' . __('Read More Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_read_more" name="pmc_read_more" type="text" value ="'.$pmcReadMore.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_strip_tags">' . __('Allow HTML in Excerpt?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_strip_tags" name="pmc_strip_tags" type="checkbox"'.$pmcStripTags.' /></label></p>';
+		echo '<h3 style="text-align: center; text-decoration: underline;">Comment Options</h3>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments">' . __('Show Latest Comments?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_comments" name="pmc_show_comments" type="checkbox"'.$pmcShowComments.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments_title">' . __('Show Comments Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_comments_title" name="pmc_show_comments_title" type="checkbox"'.$pmcShowCommentsTitle.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_comments_title">' . __('Comments Title:', 'widget') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_comments_title" name="pmc_comments_title" type="text" value="'.$pmcCommentsTitle.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_comments">' . __('Number of Comments:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_num_comments" name="pmc_num_comments" type="text" value="'.$pmcNumComments.'" /></label></p>';
-		echo '<h3>Specify CSS Styles for Pauls Latest Posts</h3>';
-		echo '<p>Note: Do not include {} braces when specifying your styles.</p>';
+		echo '<h3 style="text-align: center; text-decoration: underline;">CSS Style Options</h3>';
+		echo '<p>Note: Do not include {} braces when specifying your CSS styles.</p>';
+		echo '<p>If you prefer to specify the CSS in your own stylesheet, leave the settings as they are and untick the "Use These Styles" checkbox.</p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_use_styles">' . __('Use These Styles?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_use_styles" name="pmc_use_styles" type="checkbox"'.$pmcUseStyles.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_h3_pmc-h3">' . __('Style for Posts/ Comments Heading:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_h3_pmc-h3" name="pmc_h3_pmc-h3" type="text" value="'.$pmcH3.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_a_pmc-link">' . __('Style for Post Link:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_a_pmc-link" name="pmc_a_pmc-link" type="text" value="'.$pmcA.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_span_pmc-excerpt">' . __('Style for Excerpt Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_span_pmc-excerpt" name="pmc_span_pmc-excerpt" type="text" value="'.$pmcSpan.'" /></label></p>';
@@ -250,6 +326,7 @@ function widget_pmcLatestPosts_init() {
 		echo '<input type="hidden" id="pmc_latest_posts_submit" name="pmc_latest_posts_submit" value="1" />';
 		}
 		
+			
 		//function to load user defined styles in header
 		function pmcLoadStyles() {
 			//get options from database
@@ -258,26 +335,30 @@ function widget_pmcLatestPosts_init() {
 			$pmcAstyle = $pmcStyles['pmc_a_pmc-link'];
 			$pmcSpanstyle = $pmcStyles['pmc_span_pmc-excerpt'];
 			$pmcMorestyle = $pmcStyles['pmc_a_read_more'];
+			$pmcUseStyles = $pmcStyles['pmc_use_styles'];
 			
-			//build the style using user styles
-			$pmcHTML = '<!-- styles for Pauls Latest Posts Widget -->' . "\n";
-			$pmcHTML .= '<style type="text/css">' . "\n";
-			$pmcHTML .= 'h3.pmc-h3 {' . "\n";
-			$pmcHTML .= $pmcH3style . "\n";
-			$pmcHTML .= '}' . "\n";
-			$pmcHTML .= 'a.pmc-link {' . "\n";
-			$pmcHTML .= $pmcAstyle . "\n";
-			$pmcHTML .= '}' . "\n";
-			$pmcHTML .= 'span.pmc-excerpt {' . "\n";
-			$pmcHTML .= $pmcSpanstyle . "\n";
-			$pmcHTML .= '}' . "\n";
-			$pmcHTML .= 'a.pmc-read-more {' . "\n";
-			$pmcHTML .= $pmcMorestyle . "\n";
-			$pmcHTML .= '}' . "\n";
-			$pmcHTML .='</style>' . "\n";
+			//check if the user wants to use inbuilt styles options
+			if ($pmcUseStyles) {
+				//build the style using user styles
+				$pmcHTML = '<!-- styles for Pauls Latest Posts Widget -->' . "\n";
+				$pmcHTML .= '<style type="text/css">' . "\n";
+				$pmcHTML .= 'h3.pmc-h3 {' . "\n";
+				$pmcHTML .= $pmcH3style . "\n";
+				$pmcHTML .= '}' . "\n";
+				$pmcHTML .= 'a.pmc-link {' . "\n";
+				$pmcHTML .= $pmcAstyle . "\n";
+				$pmcHTML .= '}' . "\n";
+				$pmcHTML .= 'span.pmc-excerpt {' . "\n";
+				$pmcHTML .= $pmcSpanstyle . "\n";
+				$pmcHTML .= '}' . "\n";
+				$pmcHTML .= 'a.pmc-read-more {' . "\n";
+				$pmcHTML .= $pmcMorestyle . "\n";
+				$pmcHTML .= '}' . "\n";
+				$pmcHTML .='</style>' . "\n";
 			
-			//echo the styles
-			echo $pmcHTML;
+				//echo the styles
+				echo $pmcHTML;
+			} //close if
 		} 
 	//register the widget
 	register_sidebar_widget('Pauls Latest Posts', 'widget_pmcLatestPosts');

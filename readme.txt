@@ -23,19 +23,30 @@ Pauls Latest Pots displays a list of your latest posts and comments in the sideb
 = What settings can I change? =
 The plugin page allows you to change the following settings:
 
-1. Title: Title of the Sidebar widget.
-1. Number of Posts: Number of posts to show in the Sidebar.
-1. Excerpt Size: Number of words to display in the excerpt for the post.
-1. Randomise Post Offset: Picks a random offset and displays the next "Number of Posts" from that offset. Over-rides any specified "Post Offset".
-1. Post Offset: The number of posts to skip before displaying the list in the Sidebar. Numbering starts from 0. To ignore the latest post, set the offset to 1.
-1. Read More Text: Text display at the end of the excerpt. Defaults to "Read More".
-1. Allow HTML in Excerpt: If left unticked, all HTML tags will be stripped, leaving only plain text. Enabling this option will leave in the HTML.
-1. Show Comments: Should the widget also display your latest comments.
-1. Number of Comments: Number of comments to show in the Sidebar.
-1. Style for Posts/ Comments Heading: Set CSS style for the H3 heading used to display "Posts" and "Comments".
-1. Style for Post Link: Set CSS style for link to article.
-1. Style for Excerpt Text: Set CSS style for the excerpt.
-1. Style for Read More Link: Set CSS style for "Read More".
+1. General Options
+* Use Title: Choose whether the widget title should be displayed or not.
+* Title: Title of the Sidebar widget.
+1. Post Options
+* Show Posts: Choose whether Posts should be displayed or not.
+* Show Posts Title: Choose whether the title for the Posts section should be displayed or not.
+* Posts Title: Title for the Posts section.
+* Number of Posts: Number of posts to show in the Sidebar.
+* Excerpt Size: Number of words to display in the excerpt for the post.
+* Randomise Post Offset: Picks a random offset and displays the next "Number of Posts" from that offset. Over-rides any specified "Post Offset".
+* Post Offset: The number of posts to skip before displaying the list in the Sidebar. Numbering starts from 0. To ignore the latest post, set the offset to 1.
+* Read More Text: Text display at the end of the excerpt. Defaults to "Read More".
+* Allow HTML in Excerpt: If left unticked, all HTML tags will be stripped, leaving only plain text. Enabling this option will leave in the HTML.
+1. Comments Options
+* Show Latest Comments: Should the widget also display your latest comments.
+* Show Comments Title: Choose whether the title for the Comments section should be displayed or not.
+* Comments Title: Title for the Comments section.
+* Number of Comments: Number of comments to show in the Sidebar.
+1. Style Options
+* Use These Styles: Tick this box is you want the widget to insert the specified styles in the header of your blog. Leave this unticked if you prefer to specify the styles in your own stylesheet.
+* Style for Posts/ Comments Heading: Set CSS style for the H3 heading used to display "Posts" and "Comments".
+* Style for Post Link: Set CSS style for link to article.
+* Style for Excerpt Text: Set CSS style for the excerpt.
+* Style for Read More Link: Set CSS style for "Read More".
 
 Note: When specifying the styles there is no need to include {} at the beginning and end of your styles. See the default styles for an example.
 
@@ -51,7 +62,25 @@ If you want to, then yes. This plugin is released under the GPL. You are free to
 = What other functionality are you thinking of adding? =
 I'm looking into adding a list of latest uploads to the plugin.
 
+= I want to use my themes stylesheet to specify the styles for your plugin. What are the CSS ID's that I need to include? =
+The plugin uses the following CSS ID's:
+
+* h3.pmc-h3: used for Post and Comment section titles.
+* a.pmc-link: used for the link to the post.
+* span-pmc-excerpt: used for the excerpt.
+* a.pmc-read-more: used for the "Read More" link.
+
 == Changelog ==
+
+= Version 1.6 =
+* Added option to enable/disable display of:
+1. Widget Title
+1. Post Title
+1. Comment Title
+1. Styles
+* Added options to specify:
+1. Post Title
+1. Comment Title
 
 = Version 1.5 =
 * Added style options.
@@ -61,4 +90,4 @@ I'm looking into adding a list of latest uploads to the plugin.
 
 == Thanks ==
 
-Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality and the ability to change the Read More text. Thanks to Wil for suggesting the Randomised Offset setting.
+Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality, the ability to change the Read More text, specify post and comment titles, disabling and enabling post title, comment title and styles. Thanks to Wil for suggesting the Randomised Offset setting.
