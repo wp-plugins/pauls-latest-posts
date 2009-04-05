@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.6
+Version: 1.7
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -39,6 +39,7 @@ function widget_pmcLatestPosts_init() {
 			$pmcPostsTitle = $pmcOptions['pmc_posts_title'];
 			$pmcShowCommentsTitle = $pmcOptions['pmc_show_comments_title'];
 			$pmcCommentsTitle = $pmcOptions['pmc_comments_title'];
+			$pmcCategory = $pmcOptions['pmc_cat_list'];
 			
 			//if the user has specified a random offset
 			if ($pmcRandOffset != 'on') {				
@@ -60,6 +61,11 @@ function widget_pmcLatestPosts_init() {
 				$pmcParameters = 'numberposts=' . $pmcNumPosts . '&offset=' . $pmcPostOffset;
 			} //close if
 				
+			//check if the user has selected a category to display posts
+			if ($pmcCategory != 'all') {
+				$pmcParameters .= '&category_name="' . $pmcCategory . '"';
+			}
+			
 			//get the posts
 			$pmcPosts = get_posts($pmcParameters);
 
@@ -202,6 +208,7 @@ function widget_pmcLatestPosts_init() {
 				$newoptions['pmc_show_comments_title'] = $_POST['pmc_show_comments_title'];
 				$newoptions['pmc_comments_title'] = $_POST['pmc_comments_title'];
 				$newoptions['pmc_use_styles'] = $_POST['pmc_use_styles'];
+				$newoptions['pmc_cat_list'] = $_POST['pmc_cat_list'];
 				} //close if
 			
 			//if there's been a change, do an update
@@ -226,6 +233,7 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_a_read_more'] ) $options['pmc_a_read_more'] = 'font-weight: bold; font-size: .8em;';
 			if ( !$options['pmc_posts_title'] ) $options['pmc_posts_title'] = 'Posts';
 			if ( !$options['pmc_comments_title'] ) $options['pmc_comments_title'] = 'Comments';
+			if ( !$options['pmc_cat_list'] ) $options['pmc_cat_list'] = 'all';
 			
 			//store the options we got from the database
 			$pmcTitle = htmlspecialchars($options['pmc_title'], ENT_QUOTES);
@@ -248,6 +256,7 @@ function widget_pmcLatestPosts_init() {
 			$pmcShowCommentsTitle = htmlspecialchars($options['pmc_show_comments_title'], ENT_QUOTES);
 			$pmcCommentsTitle = htmlspecialchars($options['pmc_comments_title'], ENT_QUOTES);
 			$pmcUseStyles = htmlspecialchars($options['pmc_use_styles'], ENT_QUOTES);
+			$pmcCurrCat = htmlspecialchars($options['pmc_cat_list'], ENT_QUOTES);
 			
 			//WP stores a check box as Null or "on", in order to display properly, we need to convert "on" to "checked=yes"
 			if ($pmcShowComments) {
@@ -297,13 +306,16 @@ function widget_pmcLatestPosts_init() {
 			} else {
 				$pmcUseStyles = '';
 			}
-		echo '<h3 style="text-align: center; text-decoration: underline;">General Options</h3>';	
+		echo '<h3 style="text-align: center; text-decoration: underline;">General Options</h3>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_use_title">' . __('Use Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_use_title" name="pmc_use_title" type="checkbox"'.$pmcUseTitle.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_title">' . __('Title:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_title" name="pmc_title" type="text" value="'.$pmcTitle.'" /></label></p>';
 		echo '<h3 style="text-align: center; text-decoration: underline;">Post Options</h3>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_posts">' . __('Show Posts?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_posts" name="pmc_show_posts" type="checkbox" '.$pmcShowPosts.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_posts_title">' . __('Show Posts Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_posts_title" name="pmc_show_posts_title" type="checkbox"'.$pmcShowPostsTitle.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_posts_title">' . __('Posts Title:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_posts_title" name="pmc_posts_title" type="text" value="'.$pmcPostsTitle.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_cat_list">' . __('Display Only Posts from Category:', 'widgets');
+		echo pmcCreateCatList($pmcCurrCat);
+		echo '</label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_num_posts">' . __('Number of Posts:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_num_posts" name="pmc_num_posts" type="text" value="'.$pmcNumPosts.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_size">' . __('Excerpt Size:', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_size" name="pmc_size" type="text" value="'.$pmcSize.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_rand_offset">' . __('Randomise Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_rand_offset" name="pmc_rand_offset" type="checkbox" '.$pmcRandOffset.'" /></label></p>';
@@ -360,6 +372,43 @@ function widget_pmcLatestPosts_init() {
 				echo $pmcHTML;
 			} //close if
 		} 
+		
+		//function to create drop down box for category list
+		function pmcCreateCatList($pmcCategory) {
+			//get the list of categories
+			$pmcCatList = get_categories("type=post&orderby='name'&hide_empty=1&hierarchical=0");
+			
+			//start building the drop down box
+			$pmcSelect = '<select style="display: block; width: 300px; height: auto; text-align: left;" id="pmc_cat_list" name="pmc_cat_list">';
+			$pmcSelect .= '<option value="all">All Categories</option>';
+			
+			//loop through the category list and build the select
+			foreach ($pmcCatList as $pmcCat) {
+				//get the category name
+				$pmcCatName = $pmcCat->cat_name;
+				
+				//get the category nicename
+				$pmcCatNice = $pmcCat->category_nicename;
+				
+				//add the option
+				$pmcSelect .= '<option value="' . $pmcCatNice . '"';
+				
+				//check for the currently selected category
+				if ($pmcCategory == $pmcCatNice) {
+					 $pmcSelect .= ' selected="selected"';
+				}
+				
+				//finish off the option.
+				$pmcSelect .= '>' . $pmcCatName . '</option>';
+				
+			} //close foreach
+			
+			//close off the select
+			$pmcSelect .= '</select>';
+			
+			//return the completed list
+			return $pmcSelect;
+		}
 	//register the widget
 	register_sidebar_widget('Pauls Latest Posts', 'widget_pmcLatestPosts');
 	register_widget_control('Pauls Latest Posts', 'pmcLatestPosts_control', 300, 400 );

@@ -9,7 +9,7 @@ Display latest posts with excerpts and comments in a sidebar widget.
 
 == Description ==
 
-Pauls Latest Pots displays a list of your latest posts and comments in the sidebar with excerpts. Excerpts length can be modified or left out completely. Useful for sites that display one post on the main page, and want to link to previous posts.
+Pauls Latest Posts displays a list of your latest posts and comments in the sidebar with excerpts. Excerpts length can be modified or left out completely. Useful for sites that display one post on the main page, and want to link to previous posts.
 
 == Installation ==
 
@@ -30,6 +30,7 @@ The plugin page allows you to change the following settings:
 * Show Posts: Choose whether Posts should be displayed or not.
 * Show Posts Title: Choose whether the title for the Posts section should be displayed or not.
 * Posts Title: Title for the Posts section.
+* Display Only Posts From Category: Choose to restrict posts from a particular category. Default is to display posts from all categories.
 * Number of Posts: Number of posts to show in the Sidebar.
 * Excerpt Size: Number of words to display in the excerpt for the post.
 * Randomise Post Offset: Picks a random offset and displays the next "Number of Posts" from that offset. Over-rides any specified "Post Offset".
@@ -59,18 +60,18 @@ This plugin uses the Widget API built into WordPress since version 2.3. Therefor
 = Can I re-use your code in my own plugin? =
 If you want to, then yes. This plugin is released under the GPL. You are free to modify it, change it, re-distribute it as you want.
 
-= What other functionality are you thinking of adding? =
-I'm looking into adding a list of latest uploads to the plugin.
-
 = I want to use my themes stylesheet to specify the styles for your plugin. What are the CSS ID's that I need to include? =
 The plugin uses the following CSS ID's:
 
 * h3.pmc-h3: used for Post and Comment section titles.
 * a.pmc-link: used for the link to the post.
-* span-pmc-excerpt: used for the excerpt.
+* span.pmc-excerpt: used for the excerpt.
 * a.pmc-read-more: used for the "Read More" link.
 
 == Changelog ==
+
+= Version 1.7 =
+* Added option to restrict latest posts to a specified category.
 
 = Version 1.6 =
 * Added option to enable/disable display of:
@@ -90,4 +91,4 @@ The plugin uses the following CSS ID's:
 
 == Thanks ==
 
-Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality, the ability to change the Read More text, specify post and comment titles, disabling and enabling post title, comment title and styles. Thanks to Wil for suggesting the Randomised Offset setting.
+Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality, the ability to change the Read More text, specify post and comment titles, disabling and enabling post title, comment title and styles. Thanks to Wil for suggesting the Randomised Offset setting. Thanks to Farabi for suggesting the category option.
