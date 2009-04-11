@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.7
+Version: 1.8
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -221,7 +221,7 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_title'] ) $options['pmc_title'] = 'Latest Activity';
 			if ( !$options['pmc_num_posts'] ) $options['pmc_num_posts'] = 5;
 			if ( !$options['pmc_size'] ) $options['pmc_size'] = 25;
-			if ( !$options['pmc_post_offset'] ) $options['pmc_post_offset'] = 1;
+			if ( !$options['pmc_post_offset'] and $options['pmc_post_offset'] !=0) $options['pmc_post_offset'] = 1;
 			if ( !$options['pmc_show_comments'] ) $options['pmc_show_comments'] = '';
 			if ( !$options['pmc_num_comments'] ) $options['pmc_num_comments'] = 5;
 			if ( !$options['pmc_strip_tags'] ) $options['pmc_strip_tags'] = '';

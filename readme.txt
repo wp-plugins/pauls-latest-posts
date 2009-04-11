@@ -70,6 +70,9 @@ The plugin uses the following CSS ID's:
 
 == Changelog ==
 
+= Version 1.8 =
+* Bug Fix: Post offset of 0 not being saved correctly.
+
 = Version 1.7 =
 * Added option to restrict latest posts to a specified category.
 
