@@ -4,7 +4,7 @@ Plugin Name: Pauls Latest Posts
 Plugin URI: http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/
 Description: Plugin to display your latest posts with excerpt in a sidebar widget.
 Author: Paul McCarthy
-Version: 1.8
+Version: 1.9
 Author URI: http://www.paulmc.org/whatithink
 */
 
@@ -40,6 +40,8 @@ function widget_pmcLatestPosts_init() {
 			$pmcShowCommentsTitle = $pmcOptions['pmc_show_comments_title'];
 			$pmcCommentsTitle = $pmcOptions['pmc_comments_title'];
 			$pmcCategory = $pmcOptions['pmc_cat_list'];
+			$pmcShowDate = $pmcOptions['pmc_show_date'];
+			$pmcDateFormat = $pmcOptions['pmc_date_format'];
 			
 			//if the user has specified a random offset
 			if ($pmcRandOffset != 'on') {				
@@ -94,17 +96,30 @@ function widget_pmcLatestPosts_init() {
 		
 					//get the post data
 					setup_postdata($pmcSinglePost);
-		
+
 					//retrieve the post id and use this to get the permalink
 					$pmcLINK = $pmcSinglePost->ID;		
 					$pmcHREF = get_permalink($pmcLINK);
+					
+					//get the post date and convert it to a proper timestamp
+					$pmcPostDate = $pmcSinglePost->post_date;
+					$pmcDate = strtotime($pmcPostDate);
 		
 					//get the post title
 					$pmcTITLE = $pmcSinglePost->post_title;
 						
-					//create the link
-					echo '<li><a class="pmc-link" href="' . $pmcHREF . '">' . $pmcTITLE . '</a><br />';
-
+					//start creating the output
+					echo '<li>';
+					
+					//create the link to the post
+					echo '<a class="pmc-link" href="' . $pmcHREF . '">' . $pmcTITLE . '</a><br />' . "\n";
+					
+					//check if the user wants to display the date
+					if ($pmcShowDate) {
+						//output the date
+						echo '<div class="pmc-date">' . date($pmcDateFormat, $pmcDate) . '</div>';
+					}
+	
 					//get the content of the post
 					$pmcFullContent = get_the_content('');
 				
@@ -118,10 +133,13 @@ function widget_pmcLatestPosts_init() {
 					
 						echo '<span class="pmc-excerpt">';
 						echo $pmcTrimmedContent;
-						echo '</span><br />';
-						echo '<a class="pmc-read-more" href="' . $pmcHREF . '">' . $pmcReadMore . '</a></li>';
+						echo '</span> ';
+						echo '<a class="pmc-read-more" href="' . $pmcHREF . '">' . $pmcReadMore . '</a>';
 					}
-				
+					
+					//close the post 
+					echo '</li>';
+									
 				} //close foreach
 			
 				//close the list
@@ -189,26 +207,29 @@ function widget_pmcLatestPosts_init() {
 			if ( $_POST['pmc_latest_posts_submit'] ) {
 				//strip the user entered options for anything that shouldn't be there
 				$newoptions['pmc_title'] = strip_tags(stripslashes($_POST['pmc_title']));
-				$newoptions['pmc_num_posts'] = (int) $_POST['pmc_num_posts'];
-				$newoptions['pmc_size'] = (int) $_POST['pmc_size'];
-				$newoptions['pmc_post_offset'] = (int) $_POST['pmc_post_offset'];
-				$newoptions['pmc_show_comments'] = $_POST['pmc_show_comments'];
-				$newoptions['pmc_num_comments'] = $_POST['pmc_num_comments'];
-				$newoptions['pmc_strip_tags'] = $_POST['pmc_strip_tags'];
-				$newoptions['pmc_read_more'] = $_POST['pmc_read_more'];
-				$newoptions['pmc_rand_offset'] = $_POST['pmc_rand_offset'];
-				$newoptions['pmc_h3_pmc-h3'] = $_POST['pmc_h3_pmc-h3'];
-				$newoptions['pmc_a_pmc-link'] = $_POST['pmc_a_pmc-link'];
-				$newoptions['pmc_span_pmc-excerpt'] = $_POST['pmc_span_pmc-excerpt'];
-				$newoptions['pmc_a_read_more'] = $_POST['pmc_a_read_more'];
-				$newoptions['pmc_use_title'] = $_POST['pmc_use_title'];
-				$newoptions['pmc_show_posts'] = $_POST['pmc_show_posts'];
-				$newoptions['pmc_show_posts_title'] = $_POST['pmc_show_posts_title'];
-				$newoptions['pmc_posts_title'] = $_POST['pmc_posts_title'];
-				$newoptions['pmc_show_comments_title'] = $_POST['pmc_show_comments_title'];
-				$newoptions['pmc_comments_title'] = $_POST['pmc_comments_title'];
-				$newoptions['pmc_use_styles'] = $_POST['pmc_use_styles'];
-				$newoptions['pmc_cat_list'] = $_POST['pmc_cat_list'];
+				$newoptions['pmc_num_posts'] = (int) strip_tags(stripslashes($_POST['pmc_num_posts']));
+				$newoptions['pmc_size'] = (int) strip_tags(stripslashes($_POST['pmc_size']));
+				$newoptions['pmc_post_offset'] = (int) strip_tags(stripslashes($_POST['pmc_post_offset']));
+				$newoptions['pmc_show_comments'] = strip_tags(stripslashes($_POST['pmc_show_comments']));
+				$newoptions['pmc_num_comments'] = strip_tags(stripslashes($_POST['pmc_num_comments']));
+				$newoptions['pmc_strip_tags'] = strip_tags(stripslashes($_POST['pmc_strip_tags']));
+				$newoptions['pmc_read_more'] = strip_tags(stripslashes($_POST['pmc_read_more']));
+				$newoptions['pmc_rand_offset'] = strip_tags(stripslashes($_POST['pmc_rand_offset']));
+				$newoptions['pmc_h3_pmc-h3'] = strip_tags(stripslashes($_POST['pmc_h3_pmc-h3']));
+				$newoptions['pmc_a_pmc-link'] = strip_tags(stripslashes($_POST['pmc_a_pmc-link']));
+				$newoptions['pmc_span_pmc-excerpt'] = strip_tags(stripslashes($_POST['pmc_span_pmc-excerpt']));
+				$newoptions['pmc_a_read_more'] = strip_tags(stripslashes($_POST['pmc_a_read_more']));
+				$newoptions['pmc_use_title'] = strip_tags(stripslashes($_POST['pmc_use_title']));
+				$newoptions['pmc_show_posts'] = strip_tags(stripslashes($_POST['pmc_show_posts']));
+				$newoptions['pmc_show_posts_title'] = strip_tags(stripslashes($_POST['pmc_show_posts_title']));
+				$newoptions['pmc_posts_title'] = strip_tags(stripslashes($_POST['pmc_posts_title']));
+				$newoptions['pmc_show_comments_title'] = strip_tags(stripslashes($_POST['pmc_show_comments_title']));
+				$newoptions['pmc_comments_title'] = strip_tags(stripslashes($_POST['pmc_comments_title']));
+				$newoptions['pmc_use_styles'] = strip_tags(stripslashes($_POST['pmc_use_styles']));
+				$newoptions['pmc_cat_list'] = strip_tags(stripslashes($_POST['pmc_cat_list']));
+				$newoptions['pmc_show_date'] = strip_tags(stripslashes($_POST['pmc_show_date']));
+				$newoptions['pmc_date_format'] = strip_tags(stripslashes($_POST['pmc_date_format']));
+				$newoptions['pmc_date_style'] = strip_tags(stripslashes($_POST['pmc_date_style']));
 				} //close if
 			
 			//if there's been a change, do an update
@@ -234,6 +255,8 @@ function widget_pmcLatestPosts_init() {
 			if ( !$options['pmc_posts_title'] ) $options['pmc_posts_title'] = 'Posts';
 			if ( !$options['pmc_comments_title'] ) $options['pmc_comments_title'] = 'Comments';
 			if ( !$options['pmc_cat_list'] ) $options['pmc_cat_list'] = 'all';
+			if ( !$options['pmc_date_format'] ) $options['pmc_date_format'] = 'l, jS \of F, Y.';
+			if ( !$options['pmc_date_style'] ) $options['pmc_date_style'] = 'font-weight: bold; margin: 3px auto; padding: 3px; font-size: .8em;';
 			
 			//store the options we got from the database
 			$pmcTitle = htmlspecialchars($options['pmc_title'], ENT_QUOTES);
@@ -257,55 +280,21 @@ function widget_pmcLatestPosts_init() {
 			$pmcCommentsTitle = htmlspecialchars($options['pmc_comments_title'], ENT_QUOTES);
 			$pmcUseStyles = htmlspecialchars($options['pmc_use_styles'], ENT_QUOTES);
 			$pmcCurrCat = htmlspecialchars($options['pmc_cat_list'], ENT_QUOTES);
+			$pmcShowDate = htmlspecialchars($options['pmc_show_date'], ENT_QUOTES);
+			$pmcDateFormat = htmlspecialchars($options['pmc_date_format'], ENT_QUOTES);
+			$pmcDateStyle = htmlspecialchars($options['pmc_date_style'], ENT_QUOTES);
 			
 			//WP stores a check box as Null or "on", in order to display properly, we need to convert "on" to "checked=yes"
-			if ($pmcShowComments) {
-				$pmcShowComments = ' checked="yes" ';
-			} else {
-				$pmcShowComments = '';
-			}
+			if ($pmcShowComments) $pmcShowComments = ' checked="yes" ';
+			if ($pmcStripTags) $pmcStripTags = ' checked="yes" ';
+			if ($pmcRandOffset) $pmcRandOffset = ' checked="yes" ';
+			if ($pmcUseTitle) $pmcUseTitle = ' checked="yes" ';
+			if ($pmcShowPosts) $pmcShowPosts = ' checked="yes" ';
+			if ($pmcShowPostsTitle) $pmcShowPostsTitle = ' checked="yes" ';
+			if ($pmcShowCommentsTitle) $pmcShowCommentsTitle = ' checked="yes" ';
+			if ($pmcUseStyles) $pmcUseStyles = ' checked="yes" ';
+			if ($pmcShowDate) $pmcShowDate = ' checked="yes" ';
 			
-			if ($pmcStripTags) {
-				$pmcStripTags = ' checked="yes" ';
-			} else {
-				$pmcStripTags = '';
-			}
-			
-			if ($pmcRandOffset) {
-				$pmcRandOffset = ' checked="yes" ';
-			} else {
-				$pmcRandOffset = '';
-			}
-			
-			if ($pmcUseTitle) {
-				$pmcUseTitle = ' checked="yes" ';
-			} else {
-				$pmcUseTitle = '';
-			}
-		
-			if ($pmcShowPosts) {
-				$pmcShowPosts = ' checked="yes" ';
-			} else {
-				$pmcShowPosts = '';
-			}
-			
-			if ($pmcShowPostsTitle) {
-				$pmcShowPostsTitle = ' checked="yes" ';
-			} else {
-				$pmcShowPostsTitle = '';
-			}
-			
-			if ($pmcShowCommentsTitle) {
-				$pmcShowCommentsTitle = ' checked="yes" ';
-			} else {
-				$pmcShowCommentsTitle = '';
-			}
-			
-			if ($pmcUseStyles) {
-				$pmcUseStyles = ' checked="yes" ';
-			} else {
-				$pmcUseStyles = '';
-			}
 		echo '<h3 style="text-align: center; text-decoration: underline;">General Options</h3>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_use_title">' . __('Use Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_use_title" name="pmc_use_title" type="checkbox"'.$pmcUseTitle.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_title">' . __('Title:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_title" name="pmc_title" type="text" value="'.$pmcTitle.'" /></label></p>';
@@ -322,6 +311,8 @@ function widget_pmcLatestPosts_init() {
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_post_offset">' . __('Post Offset:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_post_offset" name="pmc_post_offset" type="text" value="'.$pmcPostOffset.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_read_more">' . __('Read More Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_read_more" name="pmc_read_more" type="text" value ="'.$pmcReadMore.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_strip_tags">' . __('Allow HTML in Excerpt?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_strip_tags" name="pmc_strip_tags" type="checkbox"'.$pmcStripTags.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_date">' . __('Show Post Date?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_date" name="pmc_show_date" type="checkbox"'.$pmcShowDate.' /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_date_format">' . __('Date Format:', 'widget') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_date_format" name="pmc_date_format" type="text" value="'.$pmcDateFormat.'" /></label>See <a href="http://www.php.net/manual/function.date.php" title="PHP: date - Manual" target="_blank">PHP Date</a> for formatting options.</p>';
 		echo '<h3 style="text-align: center; text-decoration: underline;">Comment Options</h3>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments">' . __('Show Latest Comments?:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_comments" name="pmc_show_comments" type="checkbox"'.$pmcShowComments.' /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_show_comments_title">' . __('Show Comments Title?', 'widgets') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_show_comments_title" name="pmc_show_comments_title" type="checkbox"'.$pmcShowCommentsTitle.' /></label></p>';
@@ -335,6 +326,7 @@ function widget_pmcLatestPosts_init() {
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_a_pmc-link">' . __('Style for Post Link:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_a_pmc-link" name="pmc_a_pmc-link" type="text" value="'.$pmcA.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_span_pmc-excerpt">' . __('Style for Excerpt Text:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_span_pmc-excerpt" name="pmc_span_pmc-excerpt" type="text" value="'.$pmcSpan.'" /></label></p>';
 		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_a_read_more">' . __('Style for Read More Link:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_a_read_more" name="pmc_a_read_more" type="text" value="'.$pmcMore.'" /></label></p>';
+		echo '<p style="margin: 20px auto;"><label style="display: block; width:300px; text-align: centre;" for="pmc_date_style">' . __('Style for Date:') . ' <input style="display: block; width: 300px; text-align: left;" id="pmc_date_style" name="pmc_date_style" type="text" value="'.$pmcDateStyle.'" /></label></p>';
 		echo '<input type="hidden" id="pmc_latest_posts_submit" name="pmc_latest_posts_submit" value="1" />';
 		}
 		
@@ -347,6 +339,7 @@ function widget_pmcLatestPosts_init() {
 			$pmcAstyle = $pmcStyles['pmc_a_pmc-link'];
 			$pmcSpanstyle = $pmcStyles['pmc_span_pmc-excerpt'];
 			$pmcMorestyle = $pmcStyles['pmc_a_read_more'];
+			$pmcDatestyle = $pmcStyles['pmc_date_style'];
 			$pmcUseStyles = $pmcStyles['pmc_use_styles'];
 			
 			//check if the user wants to use inbuilt styles options
@@ -365,6 +358,9 @@ function widget_pmcLatestPosts_init() {
 				$pmcHTML .= '}' . "\n";
 				$pmcHTML .= 'a.pmc-read-more {' . "\n";
 				$pmcHTML .= $pmcMorestyle . "\n";
+				$pmcHTML .= '}' . "\n";
+				$pmcHTML .= 'div.pmc-date {' . "\n";
+				$pmcHTML .= $pmcDatestyle . "\n";
 				$pmcHTML .= '}' . "\n";
 				$pmcHTML .='</style>' . "\n";
 			

@@ -37,6 +37,7 @@ The plugin page allows you to change the following settings:
 * Post Offset: The number of posts to skip before displaying the list in the Sidebar. Numbering starts from 0. To ignore the latest post, set the offset to 1.
 * Read More Text: Text display at the end of the excerpt. Defaults to "Read More".
 * Allow HTML in Excerpt: If left unticked, all HTML tags will be stripped, leaving only plain text. Enabling this option will leave in the HTML.
+* Show Date: Displays the date the post was originally published.
 1. Comments Options
 * Show Latest Comments: Should the widget also display your latest comments.
 * Show Comments Title: Choose whether the title for the Comments section should be displayed or not.
@@ -48,6 +49,7 @@ The plugin page allows you to change the following settings:
 * Style for Post Link: Set CSS style for link to article.
 * Style for Excerpt Text: Set CSS style for the excerpt.
 * Style for Read More Link: Set CSS style for "Read More".
+* Style for date: Set CSS style for the date.
 
 Note: When specifying the styles there is no need to include {} at the beginning and end of your styles. See the default styles for an example.
 
@@ -67,8 +69,14 @@ The plugin uses the following CSS ID's:
 * a.pmc-link: used for the link to the post.
 * span.pmc-excerpt: used for the excerpt.
 * a.pmc-read-more: used for the "Read More" link.
+* div.pmc-date: used for the date.
 
 == Changelog ==
+
+= Version 1.9 =
+* Added option to display post date.
+* Added option to style post date.
+* General code cleanup
 
 = Version 1.8 =
 * Bug Fix: Post offset of 0 not being saved correctly.
@@ -92,6 +100,10 @@ The plugin uses the following CSS ID's:
 * Tweaked HTML output to display better.
 * Added default styles.
 
+== Feedback ==
+
+Feedback is welcome as are feature requests. Just leave a comment on the [Plugin Page](http://www.paulmc.org/whatithink/wordpress/plugins/pauls-latest-posts/).
+
 == Thanks ==
 
-Thanks goes to Simon who suggested that I add the Latest Comments functionality. If you would like to see anything else added to the list, please do not hesitate to leave a comment on the plugin homepage. Thanks to Juno for suggesting the HTML functionality, the ability to change the Read More text, specify post and comment titles, disabling and enabling post title, comment title and styles. Thanks to Wil for suggesting the Randomised Offset setting. Thanks to Farabi for suggesting the category option.
+Thanks goes to the following people: Simon who suggested that I add the Latest Comments functionality, Juno for suggesting the HTML functionality, the ability to change the Read More text, specify post and comment titles, disabling and enabling post title, comment title and styles. Wil for suggesting the Randomised Offset setting, Farabi for suggesting the category option, Peter for reporting the bug fixed in version 1.8, Charles for the post date.
