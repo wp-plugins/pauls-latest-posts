@@ -1,5 +1,6 @@
 === Pauls Latest Posts ===
 Contributors: paulmac
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LPT7UT9QE2G42&lc=IE&item_name=Paul%20McCarthy&amount=1%2e00&currency_code=EUR&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: posts, excerpts, lastest, widget, sidebar
 Requires at least: 2.3
 Tested up to: 2.7.1
